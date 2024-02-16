@@ -1,0 +1,56 @@
+name: Build
+
+on:
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: Release or Tag
+                required: true
+            push_latest:
+                description: Set True if the build is for the latest version
+                type: boolean
+                required: false
+                default: false
+            unstable:
+                description: Build a testing/unstable image
+                type: boolean
+                required: false
+                default: false
+    release:
+     types: [published]
+
+jobs:
+    build-image:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: Set Inputs
+              id: set_inputs
+              run: |
+                if [ "${{ github.event_name }}" == "workflow_run" ]; then
+                    echo "tag=${{ github.sha }}" >> $GITHUB_ENV
+                    echo "push_latest=true" >> $GITHUB_ENV
+                else
+                    # workflow_dispatch or other trigger
+                    echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+                    echo "push_latest=${{ github.event.inputs.push_latest }}" >> $GITHUB_ENV
+                    if [ ${{ github.event.inputs.unstable}} ];
+                        then
+                            echo "unstable=-unstable" >> $GITHUB_ENV
+                        else
+                            echo "unstable=''" >> $GITHUB_ENV
+                    fi
+                fi
+
+            - name: Build Image
+              uses: hathitrust/github_actions/build@action-updates
+              with:
+                image: ghcr.io/${{ github.repository }}${{inputs.unstable}}
+                dockerfile: Dockerfile
+                tag: ${{ env.tag }}
+                push_latest: ${{ env.push_latest}}
+                registry_token: ${{ github.token }}
+                build_x_platform: true
