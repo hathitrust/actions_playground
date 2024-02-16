@@ -11,11 +11,6 @@ on:
                 type: boolean
                 required: false
                 default: false
-            unstable:
-                description: Build a testing/unstable image
-                type: boolean
-                required: false
-                default: false
     release:
      types: [published]
 
@@ -48,7 +43,7 @@ jobs:
             - name: Build Image
               uses: hathitrust/github_actions/build@action-updates
               with:
-                image: ghcr.io/${{ github.repository }}${{inputs.unstable}}
+                image: ghcr.io/${{ github.repository }}
                 dockerfile: Dockerfile
                 tag: ${{ env.tag }}
                 push_latest: ${{ env.push_latest}}
