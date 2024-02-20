@@ -11,8 +11,9 @@ on:
                 type: boolean
                 required: false
                 default: false
-    release:
-     types: [published]
+    push:
+        branches:
+            - 'action-updates'
 
 jobs:
     build-image:
