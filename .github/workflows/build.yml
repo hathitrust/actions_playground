@@ -6,6 +6,7 @@ on:
             tag:
                 description: Release or Tag
                 required: true
+                default: 'main'
             push_latest:
                 description: Set True if the build is for the latest version
                 type: boolean
