@@ -49,4 +49,3 @@ jobs:
                 tag: ${{ env.tag }}
                 push_latest: ${{ env.push_latest}}
                 registry_token: ${{ github.token }}
-                platforms: ${{ github.event.inputs.platforms }}
