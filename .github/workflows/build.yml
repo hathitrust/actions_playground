@@ -37,11 +37,11 @@ jobs:
               id: set_inputs
               run: |
                 if [ "${{ github.event_name }}" == "workflow_run" ]; then
-                    echo "tag=${{ github.sha }}" >> $GITHUB_ENV
+                    echo "ref=${{ github.sha }}" >> $GITHUB_ENV
                     echo "push_latest=true" >> $GITHUB_ENV
                 else
                     # workflow_dispatch or other trigger
-                    echo "tag=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
+                    echo "ref=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
                     echo "push_latest=${{ github.event.inputs.push_latest }}" >> $GITHUB_ENV
                 fi
 
