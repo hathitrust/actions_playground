@@ -41,7 +41,7 @@ jobs:
                     echo "push_latest=true" >> $GITHUB_ENV
                 else
                     # workflow_dispatch or other trigger
-                    echo "tag=${{ github.event.inputs.img_tag }}" >> $GITHUB_ENV
+                    echo "tag=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
                     echo "push_latest=${{ github.event.inputs.push_latest }}" >> $GITHUB_ENV
                 fi
 
@@ -50,7 +50,7 @@ jobs:
               with:
                 image: ghcr.io/${{ github.repository }}-unstable
                 dockerfile: Dockerfile
-                img_tag: ${{ env.img_tag }}
-                tag: ${{ github.event.inputs.ref }}
+                img_tag: ${{ github.event.inputs.img_tag }}
+                tag: ${{ env.ref }}
                 push_latest: ${{ env.push_latest}}
                 registry_token: ${{ github.token }}
