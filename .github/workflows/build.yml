@@ -6,11 +6,11 @@ on:
             tag:
                 description: Docker Image Tag
                 required: true
-                default: 'latest'
+                default: latest
             ref:
                 description: Revision or Branch to build
                 required: true
-                default: ${{ GITHUB_REF_NAME }}
+                default: main
             push_latest:
                 description: Set True if the build is for the latest version
                 type: boolean
