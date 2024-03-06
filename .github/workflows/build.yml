@@ -4,9 +4,13 @@ on:
     workflow_dispatch:
         inputs:
             tag:
-                description: Release or Tag
+                description: Docker Image Tag
                 required: true
-                default: 'main'
+                default: 'latest'
+            ref:
+                description: Revision or Branch to build
+                required: true
+                default: ${{ GITHUB_REF_NAME }}
             push_latest:
                 description: Set True if the build is for the latest version
                 type: boolean
