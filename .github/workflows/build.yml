@@ -48,7 +48,7 @@ jobs:
             - name: Build Image
               uses: hathitrust/github_actions/build@action-updates
               with:
-                image: ghcr.io/${{ github.repository }}-unstable
+                image: ghcr.io/${{ github.repository }}
                 dockerfile: Dockerfile
                 img_tag: ${{ github.event.inputs.img_tag }}
                 tag: ${{ env.ref }}
