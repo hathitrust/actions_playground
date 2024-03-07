@@ -37,10 +37,15 @@ jobs:
                 if [ "${{ github.event_name }}" == "workflow_run" ]; then
                     echo "ref=${{ github.sha }}" >> $GITHUB_ENV
                     echo "push_latest=true" >> $GITHUB_ENV
+                    echo "img_tag=latest" >> $GITHUB_ENV
                 else
                     # workflow_dispatch or other trigger
                     echo "ref=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
                     echo "push_latest=${{ github.event.inputs.push_latest }}" >> $GITHUB_ENV
+
+                    if [[ "${{github.event.inputs.push_latest}}" == true && "${{github.event.inputs.img_tag}}" == "unstable" ]]; then
+                        echo "img_tag=latest" >> $GITHUB_ENV
+                    fi
                 fi
 
             - name: Build Image
@@ -48,7 +53,7 @@ jobs:
               with:
                 image: ghcr.io/${{ github.repository }}
                 dockerfile: Dockerfile
-                img_tag: ${{ github.event.inputs.img_tag }}
+                img_tag: ${{ env.img_tag }}
                 tag: ${{ env.ref }}
                 push_latest: ${{ env.push_latest}}
                 registry_token: ${{ github.token }}
