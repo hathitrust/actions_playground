@@ -53,7 +53,7 @@ jobs:
               with:
                 image: ghcr.io/${{ github.repository }}
                 dockerfile: Dockerfile
-                img_tag: ${{ github.event.inputs.img_tag }}
+                img_tag: ${{ env.img_tag }}
                 tag: ${{ env.ref }}
                 push_latest: ${{ env.push_latest}}
                 registry_token: ${{ github.token }}
