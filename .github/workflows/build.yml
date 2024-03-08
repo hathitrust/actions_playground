@@ -21,6 +21,10 @@ on:
                 - linux/amd64,linux/arm64
                 - linux/amd64
                 - linux/arm64
+            rebuild:
+                description: Rebuild this image?
+                type: boolean
+                default: false
 
 jobs:
     build-image:
@@ -52,3 +56,4 @@ jobs:
                 tag: ${{ env.ref }}
                 push_latest: ${{ env.push_latest}}
                 registry_token: ${{ github.token }}
+                rebuild: true
