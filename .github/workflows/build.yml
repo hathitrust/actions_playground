@@ -1,6 +1,11 @@
 name: Build
 
 on:
+    workflow_run:
+        workflows: ['Run Tests']
+        branches: ['main']
+        types: [completed]
+
     workflow_dispatch:
         inputs:
             img_tag:
@@ -34,26 +39,13 @@ jobs:
             packages: write
 
         steps:
-            - name: Set Inputs
-              id: set_inputs
-              run: |
-                if [ "${{ github.event_name }}" == "workflow_run" ]; then
-                    echo "ref=${{ github.sha }}" >> $GITHUB_ENV
-                    echo "push_latest=true" >> $GITHUB_ENV
-                else
-                    # workflow_dispatch or other trigger
-                    echo "ref=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
-                    echo "push_latest=${{ github.event.inputs.push_latest }}" >> $GITHUB_ENV
-                    echo "img_tag=${{ github.event.inputs.img_tag }}" >> $GITHUB_ENV
-                fi
-
             - name: Build Image
               uses: hathitrust/github_actions/build@action-updates
               with:
                 image: ghcr.io/${{ github.repository }}
                 dockerfile: Dockerfile
                 img_tag: ${{ github.event.inputs.img_tag }}
-                tag: ${{ env.ref }}
-                push_latest: ${{ env.push_latest}}
+                tag: ${{ inputs.ref }}
+                push_latest: ${{ inputs.push_latest}}
                 registry_token: ${{ github.token }}
                 rebuild: true
