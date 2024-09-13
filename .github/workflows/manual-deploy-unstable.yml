@@ -58,11 +58,17 @@ jobs:
 
     deploy-unstable:
         needs: build-image
-        name: Deploy to workshop
-        uses: hathitrust/github_actions/deploy@DEV-1150
-        with:
-            image: ${{ needs.build-image.outputs.image }}
-            file: environments/${{ github.repository }}/workshop/web-image.txt
-            CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
-            CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
-        secrets: inherit
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: Deploy to workshop
+              uses: hathitrust/github_actions/deploy@DEV-1150
+              with:
+                image: ${{ needs.build-image.outputs.image }}
+                file: environments/${{ github.repository }}/workshop/web-image.txt
+                CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
+                CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
+              secrets: inherit
