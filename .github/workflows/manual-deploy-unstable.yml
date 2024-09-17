@@ -57,17 +57,15 @@ jobs:
                 echo "image=ghcr.io/${{ github.repository }}:${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
 
     deploy-unstable:
-        # needs: build-image
-        runs-on: ubuntu-latest
+        needs: build-image
         secrets: inherit
         permissions:
             contents: read
             packages: write
-        steps:
-                - name: Deploy to workshop
-                  uses: hathitrust/github_actions/deploy@DEV-1150
-                  with:
-                      image: ${{ needs.build-image.outputs.image }}
-                      file: environments/${{ github.repository }}/workshop/web-image.txt
-                      CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
-                      CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
+        name: Deploy to workshop
+        uses: hathitrust/github_actions/deploy@DEV-1150
+        with:
+            image: ${{ needs.build-image.outputs.image }}
+            file: environments/${{ github.repository }}/workshop/web-image.txt
+            CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
+            CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
