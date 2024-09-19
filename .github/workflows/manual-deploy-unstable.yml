@@ -68,6 +68,6 @@ jobs:
               with:
                 image: ${{ needs.build-image.outputs.image }}
                 file: environments/${{ github.repository }}/workshop/web-image.txt
-                CONFIG_REPO_RW_APP_ID: ${{ secrets.CONFIG_REPO_RW_APP_ID }}
-                CONFIG_REPO_FULL_NAME: ${{ env.CONFIG_REPO_FULL_NAME }}
+                CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
+                CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
                 CONFIG_REPO_RW_KEY: ${{secrets.CONFIG_REPO_RW_KEY}}
