@@ -37,6 +37,8 @@ jobs:
         permissions:
             contents: read
             packages: write
+        outputs:
+            ghc_img: ${{ steps.image.outputs.ghc_img }}
         steps:
             - name: Build Image
               uses: hathitrust/github_actions/build@DEV-1150
@@ -49,10 +51,9 @@ jobs:
                 push_latest: ${{ inputs.push_latest}}
                 registry_token: ${{ github.token }}
                 rebuild: ${{ inputs.rebuild }}
-            - run: |
-                echo "Gathering Image info for Deployment"
-                echo "ghc_img=${{steps.image.outputs.ghc_img}}" >> "$GITHUB_OUTPUT"
-            #     echo "image_pkg=ghcr.io/${{ github.repository }}:${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
+            # - run: echo "$ghc_img" >> "GITHUB_OUTPUT"
+            #   env:
+            #     ghc_img: ${{steps.image.outputs.ghc_img}}
 
     deploy-unstable:
         needs: build-image
