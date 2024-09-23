@@ -38,7 +38,7 @@ jobs:
             contents: read
             packages: write
         outputs:
-            output1: ${{ steps.image.outputs.image_pkg }}
+            image_pkg: ${{ steps.image.outputs.image_pkg }}
         steps:
             - name: Build Image
               uses: hathitrust/github_actions/build@v1.4.0
@@ -55,7 +55,6 @@ jobs:
               run: |
                 echo "Gathering Image info for Deployment"
                 echo "image_pkg=ghcr.io/${{ github.repository }}:${{ inputs.img_tag }}" >> "$GITHUB_OUTPUT"
-                echo "image_pkg = $image_pkg"
 
     deploy-unstable:
         needs: build-image
