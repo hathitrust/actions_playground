@@ -51,22 +51,19 @@ jobs:
                 push_latest: ${{ inputs.push_latest}}
                 registry_token: ${{ github.token }}
                 rebuild: ${{ inputs.rebuild }}
-            # - run: echo "$ghc_img" >> "GITHUB_OUTPUT"
-            #   env:
-            #     ghc_img: ${{steps.image.outputs.ghc_img}}
 
     deploy-unstable:
         needs: build-image
         runs-on: ubuntu-latest
-        permissions: write-all
-            # contents: read
-            # packages: write
+        permissions:
+            contents: read
+            packages: write
         steps:
             - name: Deploy to workshop
               uses: hathitrust/github_actions/deploy@DEV-1150
               with:
                 image: ${{ needs.build-image.outputs.ghc_img }}
-                file: environments/${{ github.repository }}/testing/web-image.txt
+                file: environments/${{ github.repository.name }}/testing/web-image.txt
                 CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
                 CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
                 CONFIG_REPO_RW_KEY: ${{secrets.CONFIG_REPO_RW_KEY}}
