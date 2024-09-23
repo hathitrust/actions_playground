@@ -37,11 +37,10 @@ jobs:
         permissions:
             contents: read
             packages: write
-        outputs:
-            image_pkg: ${{ steps.image.outputs.image_pkg }}
         steps:
             - name: Build Image
-              uses: hathitrust/github_actions/build@v1.4.0
+              uses: hathitrust/github_actions/build@DEV-1150
+              id: image
               with:
                 image: ghcr.io/${{ github.repository }}
                 dockerfile: Dockerfile
@@ -50,11 +49,9 @@ jobs:
                 push_latest: ${{ inputs.push_latest}}
                 registry_token: ${{ github.token }}
                 rebuild: ${{ inputs.rebuild }}
-            - name: image-info
-              id: image
-              run: |
-                echo "Gathering Image info for Deployment"
-                echo "image_pkg=ghcr.io/${{ github.repository }}:${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
+            # - run: |
+            #     echo "Gathering Image info for Deployment"
+            #     echo "image_pkg=ghcr.io/${{ github.repository }}:${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
 
     deploy-unstable:
         needs: build-image
@@ -66,7 +63,7 @@ jobs:
             - name: Deploy to workshop
               uses: hathitrust/github_actions/deploy@DEV-1150
               with:
-                image: ${{ needs.build-image.outputs.image_pkg }}
+                image: ${{ needs.build-image.outputs.ghc_img }}
                 file: environments/${{ github.repository }}/testing/web-image.txt
                 CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
                 CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
