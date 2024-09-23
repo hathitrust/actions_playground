@@ -55,6 +55,7 @@ jobs:
               run: |
                 echo "Gathering Image info for Deployment"
                 echo "image_pkg=ghcr.io/${{ github.repository }}:${{ inputs.img_tag }}" >> "$GITHUB_OUTPUT"
+                echo "image_pkg = $image_pkg"
 
     deploy-unstable:
         needs: build-image
