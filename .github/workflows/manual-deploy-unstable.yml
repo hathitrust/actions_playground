@@ -38,7 +38,7 @@ jobs:
             contents: read
             packages: write
         outputs:
-            output1: ${{ steps.image.outputs.image }}
+            output1: ${{ steps.image.outputs.image_pkg }}
         steps:
             - name: Build Image
               uses: hathitrust/github_actions/build@v1.4.0
@@ -54,7 +54,7 @@ jobs:
               id: image
               run: |
                 echo "Gathering Image info for Deployment"
-                echo "image=ghcr.io/${{ github.repository }}:${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
+                echo "image_pkg=ghcr.io/${{ github.repository }}:${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
 
     deploy-unstable:
         needs: build-image
@@ -66,7 +66,7 @@ jobs:
             - name: Deploy to workshop
               uses: hathitrust/github_actions/deploy@DEV-1150
               with:
-                image: ${{ needs.build-image.outputs.image }}
+                image: ${{ needs.build-image.outputs.image_pkg }}
                 file: environments/${{ github.repository }}/testing/web-image.txt
                 CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
                 CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
