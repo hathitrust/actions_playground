@@ -58,9 +58,9 @@ jobs:
     deploy-unstable:
         needs: build-image
         runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            packages: write
+        permissions: write-all
+            # contents: read
+            # packages: write
         steps:
             - name: Deploy to workshop
               uses: hathitrust/github_actions/deploy@DEV-1150
