@@ -41,7 +41,7 @@ jobs:
             ghc_img: ${{ steps.image.outputs.ghc_img }}
         steps:
             - name: Build Image
-              uses: hathitrust/github_actions/build@DEV-1150
+              uses: hathitrust/github_actions/build@v1
               id: image
               with:
                 image: ghcr.io/${{ github.repository }}
