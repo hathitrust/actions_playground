@@ -60,7 +60,7 @@ jobs:
             packages: write
         steps:
             - name: Deploy to workshop
-              uses: hathitrust/github_actions/deploy@DEV-1150
+              uses: hathitrust/github_actions/deploy@v1
               with:
                 image: ${{ needs.build-image.outputs.ghc_img }}
                 file: environments/${{ github.event.repository.name }}/testing/web-image.txt
