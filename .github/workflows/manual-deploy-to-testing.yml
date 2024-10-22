@@ -1,4 +1,5 @@
 name: Manual Trigger Build & Deploy Unstable
+#TODO This has the "testing" environment hard coded so this will need to be augmented.
 
 on:
     workflow_run:
@@ -52,7 +53,7 @@ jobs:
                 registry_token: ${{ github.token }}
                 rebuild: ${{ inputs.rebuild }}
 
-    deploy-unstable:
+    deploy-testing:
         needs: build-image
         runs-on: ubuntu-latest
         permissions:
