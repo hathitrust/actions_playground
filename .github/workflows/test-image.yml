@@ -17,6 +17,13 @@ on:
       ghc_img:
         description: The GHCR.io Image to test
         required: true
+  workflow_call:
+    inputs:
+      ref:
+        description: Revision or Branch to build
+        default: main
+        required: true
+        type: string
 jobs:
   Test-Code:
     runs-on: ubuntu-latest

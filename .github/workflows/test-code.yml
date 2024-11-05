@@ -14,6 +14,13 @@ on:
       ref:
         description: Revision or Branch to build
         default: main
+  workflow_call:
+    inputs:
+      ref:
+        description: Revision or Branch to build
+        default: main
+        required: true
+        type: string
 
 jobs:
   Test-Code:
