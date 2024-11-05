@@ -30,7 +30,7 @@ on:
         default: ""
         type: string
 jobs:
-  Test-Code:
+  Test-Image:
     runs-on: ubuntu-latest
 
     steps:
