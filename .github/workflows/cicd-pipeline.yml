@@ -46,6 +46,7 @@ jobs:
                 ref: ${{inputs.ref}}
     build-image:
         runs-on: ubuntu-latest
+        needs: test-code
         permissions:
             contents: read
             packages: write
@@ -74,7 +75,7 @@ jobs:
                 ref: ${{inputs.ref}}
                 ghc_img: ${{ needs.build-image.outputs.ghc_img }}
     deploy:
-        needs: build-image
+        needs: [build-image, test-image]
         runs-on: ubuntu-latest
         permissions:
             contents: read
