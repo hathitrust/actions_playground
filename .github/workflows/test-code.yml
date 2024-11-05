@@ -1,14 +1,14 @@
-name: Run Tests
+name: Run Tests on Code
 # Use the python unit tests workflow
 # Built From https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-python#introduction
 
 on:
-  push:
-    branches:
-      # All branches or just test, staging, production?
-      - test
-      - staging
-      - main
+#   push:
+#     branches:
+#       # All branches or just test, staging, production?
+#       - test
+#       - staging
+#       - main
   workflow_dispatch:
     inputs:
       ref:
@@ -39,4 +39,4 @@ jobs:
           cache: 'pip'
 
       - name: Test Python Code
-        run: python -m unittest test_python_server.py"
+        run: python -m unittest test_python_server.py
