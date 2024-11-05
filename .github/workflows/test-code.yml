@@ -1,0 +1,42 @@
+name: Run Tests
+# Use the python unit tests workflow
+# Built From https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-python#introduction
+
+on:
+  push:
+    branches:
+      # All branches or just test, staging, production?
+      - test
+      - staging
+      - main
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Revision or Branch to build
+        default: main
+
+jobs:
+  Test-Code:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{inputs.ref}}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set up & Run Tests ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Test Python Code
+        run: python -m unittest test_python_server.py"

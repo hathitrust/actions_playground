@@ -1,0 +1,35 @@
+name: Run Tests
+# Use the python unit tests workflow
+# Built From https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-python#introduction
+
+on:
+  push:
+    branches:
+      # TODO: All branches or just test, staging, production?
+      - test
+      - staging
+      - main
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Revision or Branch to build
+        default: main
+      ghc_img:
+        description: The GHCR.io Image to test
+        required: true
+jobs:
+  Test-Code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{inputs.ref}}
+
+      - name: Run Container Tests
+        run: |
+          docker container run --rm ${{inputs.ghc_img}} --name test_container
+
+          docker container exec test_container /bin/bash python_docker_test.sh
+
+          docker container stop test_container
