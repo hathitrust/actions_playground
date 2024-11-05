@@ -1,6 +1,9 @@
 FROM python:3-slim
 
-COPY index.html /
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY index.html python_docker_test.sh test_python_server.py /
 EXPOSE 7000
 
 CMD python3 -m http.server 7000
