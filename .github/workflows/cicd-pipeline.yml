@@ -41,7 +41,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Run test for branch
-              uses: ./test-code.yml
+              uses: ./.github/workflows/test-code.yml
               with:
                 ref: ${{inputs.ref}}
     build-image:
@@ -70,7 +70,7 @@ jobs:
         needs: build-image
         steps:
             - name: Run test for branch
-              uses: ./test-image.yml
+              uses: ./.github/workflows/test-image.yml
               with:
                 ref: ${{inputs.ref}}
                 ghc_img: ${{ needs.build-image.outputs.ghc_img }}
