@@ -10,7 +10,7 @@ class TestPythonServer(unittest.TestCase):
         cls.server_thread = threading.Thread(target=run_server)
         cls.server_thread.daemon = True
         cls.server_thread.start()
-        time.sleep(1)
+        time.sleep(5)
     def test_index_htlp_served(self):
         response = requests.get("http://localhost:7000/index.html")
         self.assertEqual(response.status_code, 200)
