@@ -1,12 +1,7 @@
-name: Manual Trigger Build & Deploy Unstable
+name: CICD Pipeline
 #TODO This has the "testing" environment hard coded so this will need to be augmented.
 
 on:
-    workflow_run:
-        workflows: ['Run Tests']
-        branches: ['main']
-        types: [completed]
-
     workflow_dispatch:
         inputs:
             img_tag:
@@ -27,12 +22,28 @@ on:
                 - linux/amd64,linux/arm64
                 - linux/amd64
                 - linux/arm64
+            environments:
+                description: The environment to deploy to
+                type: choice
+                default: testing
+                options:
+                - testing
+                - staging
+                - production
             rebuild:
                 description: Rebuild this image?
                 type: boolean
                 default: false
 
 jobs:
+    test-code:
+        #TODO: Use Coveralls?
+        runs-on: ubuntu-latest
+        steps:
+            - name: Run test for branch
+              uses: ./test-code.yml
+              with:
+                ref: ${{inputs.ref}}
     build-image:
         runs-on: ubuntu-latest
         permissions:
@@ -53,18 +64,28 @@ jobs:
                 registry_token: ${{ github.token }}
                 rebuild: ${{ inputs.rebuild }}
 
-    deploy-testing:
+    test-image:
+        runs-on: ubuntu-latest
+        needs: build-image
+        steps:
+            - name: Run test for branch
+              uses: ./test-image.yml
+              with:
+                ref: ${{inputs.ref}}
+                ghc_img: ${{ needs.build-image.outputs.ghc_img }}
+    deploy:
         needs: build-image
         runs-on: ubuntu-latest
         permissions:
             contents: read
             packages: write
         steps:
-            - name: Deploy to workshop
+            #TODO: Think about workflow with creating a release
+            - name: Deploy to ${{inputs.environments}}
               uses: hathitrust/github_actions/deploy@v1
               with:
                 image: ${{ needs.build-image.outputs.ghc_img }}
-                file: environments/${{ github.event.repository.name }}/testing/web-image.txt
+                file: environments/${{ github.event.repository.name }}/${{inputs.environments}}/web-image.txt
                 CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
                 CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
                 CONFIG_REPO_RW_KEY: ${{secrets.CONFIG_REPO_RW_KEY}}
