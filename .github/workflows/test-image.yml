@@ -40,7 +40,7 @@ jobs:
 
       - name: Run Container Tests
         run: |
-          docker container run --name test_container --rm ${{inputs.ghc_img}}
+          docker container run -d --name test_container --rm ${{inputs.ghc_img}}
 
           docker container exec test_container /bin/bash python_docker_test.sh
 
