@@ -1,5 +1,7 @@
 FROM python:3-slim
 
+RUN apt-get -y update; apt-get -y install curl
+
 WORKDIR /app
 
 COPY requirements.txt requirements.txt

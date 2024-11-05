@@ -1,7 +1,5 @@
 #!/bin/bash
 
-docker build
-
 # Test if the server responds on port 7000
 URL="http://localhost:7000/index.html"
 TRIES=10
