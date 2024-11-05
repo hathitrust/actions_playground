@@ -64,6 +64,7 @@ jobs:
                 rebuild: ${{ inputs.rebuild }}
 
     test-image:
+        needs: build-image
         uses: ./.github/workflows/test-image.yml
         with:
             ref: ${{inputs.ref}}

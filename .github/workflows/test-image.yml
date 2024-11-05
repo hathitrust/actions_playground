@@ -24,6 +24,11 @@ on:
         default: main
         required: true
         type: string
+      ghc_img:
+        description: The GHCR.io Image to test
+        required: true
+        default: ""
+        type: string
 jobs:
   Test-Code:
     runs-on: ubuntu-latest
