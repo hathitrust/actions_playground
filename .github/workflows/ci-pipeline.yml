@@ -1,0 +1,54 @@
+name: CICD Pipeline
+# About: Continuous Integration and Testing Pipeline
+
+on:
+    # We always want tests to run when a PR is open
+    pull_request:
+        branches:
+            # We will want this workflow to run automatically on each "environment" branch
+            - staging
+            - testing
+    workflow_dispatch:
+        inputs:
+            img_tag:
+                description: Docker Image Tag
+            ref:
+                description: Revision or Branch to build
+                default: main
+            push_latest:
+                description: Set True if the build is for the latest version
+                type: boolean
+                required: false
+                default: false
+            platforms:
+                description: Platforms to build for
+                type: choice
+                default: linux/amd64,linux/arm64
+                options:
+                - linux/amd64,linux/arm64
+                - linux/amd64
+                - linux/arm64
+            environments:
+                description: The environment to deploy to
+                type: choice
+                default: testing
+                options:
+                - testing
+                - staging
+                - production
+            rebuild:
+                description: Rebuild this image?
+                type: boolean
+                default: false
+
+jobs:
+    test-code:
+        #TODO: Use Coveralls?
+        name: Run test for branch
+        uses: ./.github/workflows/test-code.yml
+        with:
+            ref: ${{inputs.ref}}
+
+    code-coverage:
+        name: Run Coveralls
+        runs-on: ubuntu-latest

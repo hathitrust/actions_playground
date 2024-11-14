@@ -1,10 +1,12 @@
-name: CICD Pipeline
-# Description: Runs for the Production environment
+name: CD Pipeline
+# About: The Continuous Deployment Pipeline
 
 on:
-    release:
-        # Runs your workflow when release activity in your repository occurs. In this case, when a release is published.
-        types: [published]
+    push:
+        branches:
+            # We will not include the main branch here. We want to trigger that work flow with the creation of a release.
+            - staging
+            - testing
 
     workflow_dispatch:
         inputs:
@@ -26,20 +28,18 @@ on:
                 - linux/amd64,linux/arm64
                 - linux/amd64
                 - linux/arm64
-            environments:
-                description: The environment to deploy to
-                type: choice
-                default: production
-                options:
-                - testing
-                - staging
-                - production
             rebuild:
                 description: Rebuild this image?
                 type: boolean
                 default: false
 
 jobs:
+    # set-environment:
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: Determining Environment
+    #           run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_BRANCH
+
     test-code:
         #TODO: Use Coveralls?
         name: Run test for branch
@@ -61,7 +61,7 @@ jobs:
               with:
                 image: ghcr.io/${{ github.repository }}
                 dockerfile: Dockerfile
-                img_tag: ${{ github.ref_name }}
+                img_tag: ${{ inputs.img_tag }}
                 tag: ${{ inputs.ref }}
                 push_latest: ${{ inputs.push_latest}}
                 registry_token: ${{ github.token }}
@@ -76,16 +76,18 @@ jobs:
     deploy:
         needs: [build-image, test-image]
         runs-on: ubuntu-latest
+        environment:
+            name: ${{ github.GITHUB_REF_NAME}}
         permissions:
             contents: read
             packages: write
         steps:
             #TODO: Think about workflow with creating a release
-            - name: Deploy to ${{inputs.environments}}
+            - name: Deploy to ${{github.GITHUB_REF_NAME}}}
               uses: hathitrust/github_actions/deploy@v1
               with:
-                image: ${{ needs.build-image.outputs.ghc_img}}
-                file: environments/${{ github.event.repository.name }}/${{inputs.environments}}/web-image.txt
+                image: ${{ needs.build-image.outputs.ghc_img }}
+                file: environments/${{ github.event.repository.name }}/${{github.GITHUB_REF_NAME}}}/web-image.txt
                 CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
                 CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
                 CONFIG_REPO_RW_KEY: ${{secrets.CONFIG_REPO_RW_KEY}}
