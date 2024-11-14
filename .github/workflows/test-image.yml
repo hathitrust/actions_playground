@@ -3,12 +3,6 @@ name: Run Tests on Container
 # Built From https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-python#introduction
 
 on:
-  # push:
-  #   branches:
-  #     # TODO: All branches or just test, staging, production?
-  #     - test
-  #     - staging
-  #     - main
   workflow_dispatch:
     inputs:
       ref:
