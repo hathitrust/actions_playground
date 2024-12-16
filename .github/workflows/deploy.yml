@@ -22,7 +22,7 @@ jobs:
                 contents: read
                 packages: write
             steps:
-                - name: Deploy to workshop
+                - name: Deploy to ${{inputs.environments}}
                   uses: hathitrust/github_actions/deploy@v1
                   with:
                     image: ghcr.io/${{ github.repository }}:${{ inputs.branch_hash }}
