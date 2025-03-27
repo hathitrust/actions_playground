@@ -1,0 +1,21 @@
+name: Scan Image
+
+on:
+    workflow_dispatch:
+        inputs:
+            image-ref:
+                description: Branch sha or revision to deploy (Defaults to branch sha)
+            branch_hash:
+                description: Branch sha or revision to deploy (Defaults to branch sha)
+
+jobs:
+    scan:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Scanning Image ${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
+              uses: hathitrust/github_actions/scan-image@DEV-1240
+              with:
+                image-ref: ghcr.io/${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
