@@ -9,7 +9,7 @@ on:
                 description: Branch sha or revision to deploy (Defaults to branch sha)
 
 jobs:
-    deploy:
+    scan:
             runs-on: ubuntu-latest
             permissions:
                 contents: read
