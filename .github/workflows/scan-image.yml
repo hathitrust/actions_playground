@@ -1,4 +1,4 @@
-name: Scan Image
+name: Image Scan
 
 on:
     workflow_dispatch:
@@ -18,4 +18,4 @@ jobs:
             - name: Scanning Image ${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
               uses: hathitrust/github_actions/scan-image@DEV-1240
               with:
-                image-ref: ghcr.io/hathitrust/${{ github.repository || inputs.image-ref }}:${{ inputs.branch_hash || github.sha}}
+                image-ref: ghcr.io/${{ github.repository || inputs.image-ref }}:${{ inputs.branch_hash || github.sha}}
