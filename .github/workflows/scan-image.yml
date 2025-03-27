@@ -10,12 +10,12 @@ on:
 
 jobs:
     scan:
-            runs-on: ubuntu-latest
-            permissions:
-                contents: read
-                packages: write
-            steps:
-                - name: Scanning Image ${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
-                  uses: hathitrust/github_actions/scan-image@DEV-1240
-                  with:
-                    image-ref: ghcr.io/${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Scanning Image ${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
+              uses: hathitrust/github_actions/scan-image@DEV-1240
+              with:
+                image-ref: ghcr.io/${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
