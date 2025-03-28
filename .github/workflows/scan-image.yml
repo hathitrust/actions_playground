@@ -18,6 +18,7 @@ jobs:
         permissions:
             contents: read
             packages: write
+            pull-requests: write
         steps:
             - name: Scanning Image ${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
               uses: hathitrust/github_actions/scan-image@DEV-1240
