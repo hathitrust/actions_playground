@@ -1,10 +1,6 @@
 name: Image Scan
 
 on:
-    pull_request:
-        branches:
-            - main
-
     workflow_dispatch:
         inputs:
             image-ref:
@@ -24,7 +20,4 @@ jobs:
             - name: Scanning Image ${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
               uses: hathitrust/github_actions/scan-image@DEV-1240
               with:
-                # image-ref: ghcr.io/${{ github.repository || inputs.image-ref }}:${{ inputs.branch_hash || github.sha}}
-                image-ref: ghcr.io/${{ github.repository || inputs.image-ref }}:${{ inputs.branch_hash || 'e688a4b471d6956520cca87a7626bacfbc5f3ec4'}}
-              env:
-                TRIVY_DISABLE_VEX_NOTICE: true
+                image-ref: ghcr.io/${{ github.repository || inputs.image-ref }}:${{ inputs.branch_hash || github.sha}}
