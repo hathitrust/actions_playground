@@ -1,0 +1,81 @@
+name: Continuous Integration
+description: This job pipeline is designed to run tests, builds, and security scans of the filesystem, repository, and image.
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch: # Do we want to manually run this pipeline?
+        inputs:
+            img_tag:
+                description: Docker Image Tag
+            ref:
+                description: Revision or Branch to build
+                default: main
+            push_latest:
+                description: Set True if the build is for the latest version
+                type: boolean
+                required: false
+                default: false
+            platforms:
+                description: Platforms to build for
+                type: choice
+                default: linux/amd64,linux/arm64
+                options:
+                - linux/amd64,linux/arm64
+                - linux/amd64
+                - linux/arm64
+            environments:
+                description: The environment to deploy to
+                type: choice
+                default: testing
+                options:
+                - testing
+                - staging
+                - production
+            rebuild:
+                description: Rebuild this image?
+                type: boolean
+                default: false
+
+jobs:
+    build-image:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        outputs:
+            ghc_img: ${{ steps.image.outputs.ghc_img }}
+        steps:
+            - name: Build Image
+              uses: hathitrust/github_actions/build@v1
+              id: image
+              with:
+                image: ghcr.io/${{ github.repository }}
+                dockerfile: Dockerfile
+                img_tag: ${{ inputs.img_tag }}
+                tag: ${{ inputs.ref }}
+                push_latest: ${{ inputs.push_latest}}
+                registry_token: ${{ github.token }}
+                rebuild: ${{ inputs.rebuild }}
+    test-image:
+        needs: build-image
+        uses: ./.github/workflows/test-image.yml
+        with:
+            ref: ${{inputs.ref}}
+            ghc_img: ${{ needs.build-image.outputs.ghc_img }} # ghcr.io/hathitrust/image:tag
+    scan-image:
+        needs: build-image
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            pull-requests: write
+        steps:
+            - name: Scanning Image ${{ needs.build-image.outputs.ghc_img }}
+              uses: hathitrust/github_actions/scan-image@DEV-1240
+              with:
+                image-ref: ${{ needs.build-image.outputs.ghc_img }}
