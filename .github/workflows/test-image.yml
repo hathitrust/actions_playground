@@ -38,10 +38,11 @@ jobs:
         with:
           ref: ${{inputs.ref}}
 
-      - name: Run Container Tests
-        run: |
-          docker container run -d --name test_container --rm ${{inputs.ghc_img}}
+      - name: Set Up Container Tests
+        run: docker container run -d --name test_container --rm ${{inputs.ghc_img}}
 
-          docker container exec test_container /bin/bash python_docker_test.sh
+      - name: Run Test
+        run:  docker container exec test_container /bin/bash python_docker_test.sh
 
-          docker container stop test_container
+      - name: Stop Tests
+        run: docker container stop test_container
