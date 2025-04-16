@@ -18,6 +18,6 @@ jobs:
 
         steps:
             - name: Scanning Image ${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
-              uses: hathitrust/github_actions/scan-image@DEV-1240
+              uses: hathitrust/github_actions/scan-image@v1.7.0 # Will update to v1 after demo and appoval
               with:
                 image-ref: ghcr.io/${{ github.repository || inputs.image-ref }}:${{ inputs.branch_hash || github.sha}}

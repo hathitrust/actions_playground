@@ -76,6 +76,6 @@ jobs:
             pull-requests: write
         steps:
             - name: Scanning Image ${{ needs.build-image.outputs.ghc_img }}
-              uses: hathitrust/github_actions/scan-image@DEV-1240
+              uses: hathitrust/github_actions/scan-image@v1.7.0
               with:
                 image-ref: ${{ needs.build-image.outputs.ghc_img }}
