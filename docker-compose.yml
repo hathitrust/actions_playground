@@ -2,7 +2,7 @@ name: test compose
 
 services:
   web:
-   container_name: python_web
+   container_name: python-web
    build:
     context: .
    ports:
