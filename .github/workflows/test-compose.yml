@@ -1,0 +1,26 @@
+name: Run Test with Docker compose
+on:
+    workflow_dispatch:
+
+jobs:
+    test-compose:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Cache Docker layers
+              uses: actions/cache@v4
+              with:
+                path: /tmp/.buildx-cache
+                key: ${{ runner.os }}-buildx-${{ github.sha }}
+                restore-keys: |
+                    ${{ runner.os }}-buildx-
+
+            - name: Run Compose
+              run: docker compose build --pull
+            - name: Test response
+              run: curl http//localhost:8080

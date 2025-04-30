@@ -1,0 +1,9 @@
+name: test compose
+
+services:
+  web:
+   container_name: python_web
+   build:
+    context: .
+   ports:
+    - "8080:7000"
