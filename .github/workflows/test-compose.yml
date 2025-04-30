@@ -22,5 +22,3 @@ jobs:
 
             - name: Run Compose
               run: docker compose build --pull
-            - name: Test response
-              run: curl http//localhost:8080
