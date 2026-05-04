@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{inputs.ref}}
 
@@ -42,7 +42,7 @@ jobs:
         run: docker container run -d --name test_container --rm ${{inputs.ghc_img}}
 
       - name: Run Test
-        run:  docker container exec test_container /bin/bash python_docker_test.sh
+        run: docker container exec test_container /bin/bash python_docker_test.sh
 
       - name: Stop Tests
         run: docker container stop test_container
