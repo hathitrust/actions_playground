@@ -18,9 +18,9 @@ on:
                 type: choice
                 default: linux/amd64,linux/arm64
                 options:
-                - linux/amd64,linux/arm64
-                - linux/amd64
-                - linux/arm64
+                    - linux/amd64,linux/arm64
+                    - linux/amd64
+                    - linux/arm64
             rebuild:
                 description: Rebuild this image?
                 type: boolean
@@ -35,12 +35,12 @@ jobs:
 
         steps:
             - name: Build Image
-              uses: hathitrust/github_actions/build@v1
+              uses: hathitrust/github_actions/.github/workflows/build@ETT-1378
               with:
-                image: ghcr.io/${{ github.repository }}
-                dockerfile: Dockerfile
-                img_tag: ${{ inputs.img_tag }}
-                tag: ${{ inputs.ref }}
-                push_latest: ${{ inputs.push_latest}}
-                registry_token: ${{ github.token }}
-                rebuild: ${{ inputs.rebuild }}
+                  image: ghcr.io/${{ github.repository }}
+                  dockerfile: Dockerfile
+                  img_tag: ${{ inputs.img_tag }}
+                  tag: ${{ inputs.ref }}
+                  push_latest: ${{ inputs.push_latest}}
+                  registry_token: ${{ github.token }}
+                  rebuild: ${{ inputs.rebuild }}
