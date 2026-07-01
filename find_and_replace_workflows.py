@@ -32,10 +32,11 @@ parser.add_argument("--branch", help="Branch to create", required=True)
 parser.add_argument("--commit-message",
                     default="Updating reusable workflow references", help="Commit message for changes")
 parser.add_argument(
-    "--find", help="String to find in workflow references", required=True)
+    "--find", help="String to find in workflow references")
 
 parser.add_argument(
-    "--replace", help="String to replace in workflow references", required=True)
+    "--replace", help="String to replace in workflow references")
+
 
 args = parser.parse_args()
 
@@ -77,7 +78,7 @@ def find_workflow_files(repo):
     return sorted(files)
 
 
-def collect_changes(repo):
+def collect_changes(repo, find, replace):
     """
     Scan workflow files and collect proposed replacements.
 
@@ -94,7 +95,7 @@ def collect_changes(repo):
     changes = []
     for workflow_file in find_workflow_files(repo):
         text = workflow_file.read_text(encoding="utf-8")
-        matches = list(re.compile(args.find).finditer(text))
+        matches = list(re.compile(find).finditer(text))
 
         if not matches:
             continue
@@ -102,8 +103,8 @@ def collect_changes(repo):
         for match in matches:
             before = match.group(0)
             after = re.sub(
-                re.compile(args.find),
-                args.replace,
+                re.compile(find),
+                replace,
                 before,
             )
 
@@ -176,10 +177,44 @@ def run_command(command, cwd):
 
 
 # Git Operations
+
+def git_stash_pull_main(repo):
+    """
+    Stash any local changes, checkout main, pull latest.
+    """
+
+    run_command(
+        ["git", "stash"],
+        repo,
+    )
+
+    run_command(
+        ["git", "checkout", "main"],
+        repo,
+    )
+
+    run_command(
+        ["git", "pull", "origin", "main"],
+        repo,
+    )
+
+
 def prepare_repository(repo):
     """
     Checkout main, pull latest, create feature branch.
     """
+
+    # Check if branch already exists locally or remotely
+    existing_branches = run_command(
+        ["git", "branch", "--list", args.branch],
+        repo,
+    )
+    if existing_branches:
+        print(
+            f"\nBranch '{args.branch}' already exists in repository: {repo}.")
+        return
+    else:
+        pass
 
     print(f"\nPreparing repository: {repo}")
 
@@ -194,13 +229,13 @@ def prepare_repository(repo):
     )
 
     # Delete existing local branch for a clean start. Making this operation re-runable
-    try:
-        run_command(
-            ["git", "branch", "-D", args.branch],
-            repo,
-        )
-    except RuntimeError:
-        pass
+    # try:
+    #     run_command(
+    #         ["git", "branch", "-D", args.branch],
+    #         repo,
+    #     )
+    # except RuntimeError:
+    #     pass
 
     run_command(
         ["git", "checkout", "-b", args.branch],
@@ -249,7 +284,7 @@ def cleanup_repository(repo):
 
 def commit_and_push(repo):
     """
-    Commit and push branch.
+    Commit changes to the branch.
     git status --porcelain = show me the status in a simple format that is easy to parse
     """
 
@@ -283,8 +318,8 @@ def commit_and_push(repo):
         repo,
     )
 
-
 # Main
+
 
 def main():
     repos = find_repositories(args.root_dir)
@@ -297,12 +332,45 @@ def main():
     print("\nScanning repositories for proposed changes...")
     print("--------------------------------------------------\n")
 
+    # Opportunity to collect multiple changes across repositories before applying them, so that the user can review all changes at once.
+    replacements = []
+
+    # First pair can still come from CLI or remove this all together.
+    if args.find and args.replace:
+        replacements.append({
+            "find": args.find,
+            "replace": args.replace,
+        })
+
+    # Allow additional replacements
+    while True:
+        find = input("Find (leave blank to finish): ").strip()
+        if not find:
+            break
+
+        replace = input("Replace with: ")
+
+        replacements.append({
+            "find": find,
+            "replace": replace,
+        })
+
+    # Step 1: Collect the changes across all repositories and display them for review
     for repo in repos:
-        changes = collect_changes(repo)
-        if changes:
-            proposed_changes[repo] = changes
+        # Stash any local changes, checkout main, pull latest
+        git_stash_pull_main(repo)
+        repo_changes = []  # List to hold changes for the current repository
+        for replacement in replacements:
+            find = replacement["find"]
+            replace = replacement["replace"]
+            changes = collect_changes(repo, find, replace)
+
+            # Add changes to the list for the current repository
+            repo_changes.extend(changes)
+        if repo_changes:  # Only add to proposed_changes if there are changes for this repository
+            proposed_changes[repo] = repo_changes
             print(f"\nFound changes in {repo}")
-            for change in changes:
+            for change in repo_changes:
                 print(f"File: {change['file']}")
                 print(f"    Before: {change['before']}")
                 print(f"    After:  {change['after']}")
@@ -311,23 +379,27 @@ def main():
         print("\nNo proposed changes found.")
         sys.exit(0)
 
+    reponse = input(
+        "\nDo you want to apply these changes or abort? (y/n): ")
+    if reponse.lower() != 'y':
+        print("Not applying changes.")
+        sys.exit(0)
+
+    # Step 2: Apply the changes
     for repo in proposed_changes.keys():
-        # Prepare and view diff for each repository, but only process the first one for now as testing. Remove the break statement to process all repositories.
         try:
             prepare_repository(repo)
+            # TODO: Augment so that it also takes in the find and replace arguments, so that it can apply multiple replacements in one go.
             modified_files = apply_changes(repo)
             view_diff(repo)
         except RuntimeError as e:
             print(f"Error processing repository {repo}: {e}")
-        break  # Remove this break to process all repositories
-
-    reponse = input(
-        "\nDo you want to apply these changes? (y/n): ")
-    if reponse.lower() != 'y':
-        cleanup_repository(repo)
-        print("Aborting changes.")
-        sys.exit(0)
-    else:
+        # break  # Remove this break to process all repositories
+        response = input(
+            f"\nDo you want to commit and push changes for repository {repo}? (y/n): ")
+        if response.lower() != 'y':
+            print(f"Not committing and pushing changes for repository: {repo}")
+            continue
         print("\nApplying changes...")
         for repo in proposed_changes.keys():
             try:
@@ -338,8 +410,8 @@ def main():
                 print(f"Modified files in {repo}:")
                 for file in modified_files:
                     print(f"{file}")
-                # commit_and_push(repo)
-                # print(f"Changes applied and pushed for repository: {repo}")
+                commit_and_push(repo)
+                print(f"Changes applied and pushed for repository: {repo}")
             except RuntimeError as e:
                 print(f"Error processing repository {repo}: {e}")
             break  # Remove this break to process all repositories
