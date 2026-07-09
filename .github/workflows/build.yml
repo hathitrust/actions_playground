@@ -32,7 +32,7 @@ jobs:
             contents: read
             packages: write
         name: Build Image
-        uses: hathitrust/github_actions/.github/workflows/build.yml@167b911da53b48b05280b6dfb99a235ac457f255 #github_token
+        uses: hathitrust/github_actions/.github/workflows/build.yml@github_token
         with:
             image: ghcr.io/${{ github.repository }}
             dockerfile: Dockerfile
@@ -40,3 +40,4 @@ jobs:
             tag: ${{ inputs.ref }}
             push_latest: ${{ inputs.push_latest}}
             rebuild: ${{ inputs.rebuild }}
+        secrets: inherit
