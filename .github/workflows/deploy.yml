@@ -10,22 +10,20 @@ on:
                 type: choice
                 default: testing
                 options:
-                - testing
-                - staging
-                - production
+                    - testing
+                    - staging
+                    - production
 
 jobs:
     deploy:
-            runs-on: ubuntu-latest
-            permissions:
-                contents: read
-                packages: write
-            steps:
-                - name: Deploy to ${{inputs.environments}}
-                  uses: hathitrust/github_actions/deploy@v1
-                  with:
-                    image: ghcr.io/${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
-                    file: environments/${{ github.event.repository.name }}/${{inputs.environments}}/web-image.txt
-                    CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
-                    CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
-                    CONFIG_REPO_RW_KEY: ${{secrets.CONFIG_REPO_RW_KEY}}
+        permissions:
+            contents: read
+            packages: write
+        name: Deploy to ${{inputs.environments}}
+        uses: hathitrust/github_actions/.github/workflows/deploy.yml@167b911da53b48b05280b6dfb99a235ac457f255 # github_token
+        with:
+            image: ghcr.io/${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
+            file: environments/${{ github.event.repository.name }}/${{inputs.environments}}/web-image.txt
+            CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
+            CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
+            CONFIG_REPO_RW_KEY: ${{secrets.CONFIG_REPO_RW_KEY}}
