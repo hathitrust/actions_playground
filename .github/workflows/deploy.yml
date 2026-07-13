@@ -24,4 +24,5 @@ jobs:
         with:
             image: ghcr.io/${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
             file: environments/${{ github.event.repository.name }}/${{inputs.environments}}/web-image.txt
+            CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
         secrets: inherit
