@@ -20,7 +20,7 @@ jobs:
             contents: read
             packages: write
         name: Deploy to ${{inputs.environments}}
-        uses: hathitrust/github_actions/.github/workflows/deploy.yml01b5414ee8d41485319b355b347002d269d42d30 # main
+        uses: hathitrust/github_actions/.github/workflows/deploy.yml@01b5414ee8d41485319b355b347002d269d42d30 # main # main
         with:
             image: ghcr.io/${{ github.repository }}:${{ inputs.branch_hash || github.sha}}
             file: environments/${{ github.event.repository.name }}/${{inputs.environments}}/web-image.txt
